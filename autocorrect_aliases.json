@@ -1,0 +1,6 @@
+[
+  {
+    "command": "git",
+    "pattern": [["status"], ["add", "-A"], ["commit", "-m"]]
+  }
+]
