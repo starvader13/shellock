@@ -2,3 +2,5 @@ docs
 
 # Virtual Enviroment
 .venv
+.idea
+__pycache__

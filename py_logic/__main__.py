@@ -28,7 +28,7 @@ def main():
         "learn", help="Learn a new pattern from a successful command"
     )
     parser_learn.add_argument(
-        "successful_command", typr=str, help="The full string of the successful command"
+        "successful_command", type=str, help="The full string of the successful command"
     )
 
     args = parser.parse_args()
