@@ -2,7 +2,7 @@ from typing import List, Optional
 
 from rapidfuzz import fuzz, process
 
-SCORE_THRESHOLD = 75
+SCORE_THRESHOLD = 66
 
 
 def find_best_match(query: str, choices: List[str]) -> Optional[str]:

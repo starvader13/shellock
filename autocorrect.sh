@@ -1,4 +1,4 @@
-#!/bin/sh
+#!/bin/zsh
 
 # autocorrect.sh - Zsh wrapper for the Python-based autocorrect tool
 # This script should be sourced in your .zshrc file: `source /path/to/autocorrect.sh
@@ -13,20 +13,21 @@ PY_LOGIC_DIR="$SCRIPT_DIR/py_logic"
 command_not_found_handler() {
     local failed_command="$*"
 
-    if [[ ! -x "PYTHON_EXEC" ]] || [[ ! -d "$PY_LOGIC_DIR" ]]; then
+    if [[ ! -x "$PYTHON_EXEC" ]] || [[ ! -d "$PY_LOGIC_DIR" ]]; then
         echo "zsh: command not found: ${failed_command}" >&2
         return 127
     fi
 
-    local suggestion=$("PYTHON_EXEC" -m py_logic syggest "$failed_command")
+    local suggestion=$("$PYTHON_EXEC" -m py_logic suggest "$failed_command")
 
     if [[ -z "$suggestion" ]]; then
-        return 123
+        echo "zsh: command not found: ${failed_command}" >&2
+        return 127
     fi
 
     echo "Suggested: $suggestion"
 
-    read -k 1 -r 'choice? (a)ccept, (r)eject, or (c)orrect? '
+    read -k 1 -r 'choice? (a)ccept, (r)eject, or (c)orrect? ' choice
 
     case "$choice" in
         a|A)
@@ -34,18 +35,18 @@ command_not_found_handler() {
             ;;
         c|C)
             echo
-            read -e -p "Please enter the correct command: " user_correction
+            read -e -p -r "Please enter the correct command: " user_correction
 
             eval "$user_correction"
 
             if [[ $? -eq 0 ]]; then
-                "$PYTHON_EXEC" -m py_logic learn "$user_correctionk"
+                "$PYTHON_EXEC" -m py_logic learn "$user_correction"
             else
                 echo "The corrected command failed. Not learning this pattern"
             fi
             ;;
         *)
-            echo "\nCommand rejected"
+            printf "\nCommand rejected"
             return 127
             ;;
     esac

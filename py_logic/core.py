@@ -53,9 +53,22 @@ def get_suggestion(failed_command: str) -> Optional[str]:
     if not best_pattern_str:
         return " ".join([corrected_command] + user_args)
 
-    final_suggestion = f"{corrected_command} {best_pattern_str}"
+    best_pattern_words = []
+    try:
+        best_pattern_words = shlex.split(best_pattern_str)
+    except ValueError:
+        pass
 
-    return final_suggestion
+    final_suggestion_parts = [corrected_command]
+
+    if len(user_args) > len(best_pattern_words):
+        final_suggestion_parts.extend(best_pattern_words)
+        extra_user_words = user_args[len(best_pattern_words) :]
+        final_suggestion_parts.extend(extra_user_words)
+    else:
+        final_suggestion_parts.extend(best_pattern_words)
+
+    return " ".join(final_suggestion_parts).strip()
 
 
 def learn_pattern(successful_command: str) -> None:

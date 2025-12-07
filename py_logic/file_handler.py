@@ -14,7 +14,7 @@ def read_and_load_data() -> List[Dict[str, Any]]:
         Returns an empty list if the file doesn't exists or is invalid
     """
 
-    if not CONFIG_FILE:
+    if not CONFIG_FILE.exists():
         return []
 
     try:
