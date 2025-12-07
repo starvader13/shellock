@@ -2,5 +2,9 @@
   {
     "command": "git",
     "pattern": [["status"], ["add", "-A"], ["commit", "-m"]]
+  },
+  {
+    "command": "ls",
+    "pattern": [["-l", "-lart"]]
   }
 ]
