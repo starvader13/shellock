@@ -31,17 +31,19 @@ command_not_found_handler() {
     case "$choice" in
         a|A)
             eval "$suggestion"
+            ;;
         c|C)
             echo
             read -e -p "Please enter the correct command: " user_correction
 
             eval "$user_correction"
 
-            if [[ &? -eq 0 ]]; then
+            if [[ $? -eq 0 ]]; then
                 "$PYTHON_EXEC" -m py_logic learn "$user_correctionk"
             else
                 echo "The corrected command failed. Not learning this pattern"
             fi
+            ;;
         *)
             echo "\nCommand rejected"
             return 127
