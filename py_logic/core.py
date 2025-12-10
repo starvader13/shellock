@@ -6,17 +6,17 @@ from py_logic import file_handler, fuzzy_logic
 
 def get_suggestion(failed_command: str) -> Optional[str]:
     """
-    Orchestrates the process of finding a command suggestion
+    Orchestrates the process of finding a command suggestion.
 
-    This function implements the two-step fuzzy matching
-    1. Find the best matching main command (e.g. "git")
-    2. Find the best matching argument pattern (e.g. ["pull", "origin", "main"])
+    This function implements the two-step fuzzy matching:
+    1. Find the best matching main command (e.g. "git").
+    2. Find the best matching argument pattern (e.g. ["pull", "origin", "main"]).
 
     Args:
-        failed_command: The full command string that the user typed
+        failed_command: The full command string that the user typed.
 
     Returns:
-        A string of the suggested corrected command, or None if no good suggestion could be found
+        A string of the suggested corrected command, or None if no good suggestion could be found.
     """
 
     try:
@@ -34,6 +34,9 @@ def get_suggestion(failed_command: str) -> Optional[str]:
     known_commands = [item["command"] for item in all_data]
     corrected_command = fuzzy_logic.find_best_match(user_command, known_commands)
 
+    # If no correction for the main command, return None.
+    # Note: We could potentially suggest the original command with corrected args if main command is perfect,
+    # but for now, if the main command is bad, no suggestion.
     if not corrected_command:
         return None
 
@@ -42,31 +45,22 @@ def get_suggestion(failed_command: str) -> Optional[str]:
     )
 
     if not command_data or "patterns" not in command_data:
-        return None
-
-    user_args_str = " ".join(user_args)
-
-    pattern_choices = [" ".join(p) for p in command_data["patterns"]]
-
-    best_pattern_str = fuzzy_logic.find_best_match(user_args_str, pattern_choices)
-
-    if not best_pattern_str:
         return " ".join([corrected_command] + user_args)
 
-    best_pattern_words = []
-    try:
-        best_pattern_words = shlex.split(best_pattern_str)
-    except ValueError:
-        pass
+    known_patterns_for_command = command_data["patterns"]
+    
+    best_matching_pattern_list = fuzzy_logic.find_best_pattern_match(user_args, known_patterns_for_command)
 
     final_suggestion_parts = [corrected_command]
 
-    if len(user_args) > len(best_pattern_words):
-        final_suggestion_parts.extend(best_pattern_words)
-        extra_user_words = user_args[len(best_pattern_words) :]
-        final_suggestion_parts.extend(extra_user_words)
+    if best_matching_pattern_list:
+        final_suggestion_parts.extend(best_matching_pattern_list)
+        
+        if len(user_args) > len(best_matching_pattern_list):
+            extra_user_words = user_args[len(best_matching_pattern_list):]
+            final_suggestion_parts.extend(extra_user_words)
     else:
-        final_suggestion_parts.extend(best_pattern_words)
+        final_suggestion_parts.extend(user_args)
 
     return " ".join(final_suggestion_parts).strip()
 

@@ -1,10 +1,23 @@
 [
   {
     "command": "git",
-    "patterns": [["status"], ["add", "-A"], ["commit", "-m"]]
+    "patterns": [
+      ["status"],
+      ["add", "-A"],
+      ["commit", "-m"],
+      ["pull", "origin"]
+    ]
   },
   {
-    "command": "ls",
-    "patterns": [["-l", "-lart"]]
+    "command": "docker",
+    "patterns": [
+      ["ps"],
+      ["ps", "-a"],
+      ["run", "-it"]
+    ]
+  },
+  {
+    "command": "clear",
+    "patterns": [[]]
   }
 ]
