@@ -4,11 +4,18 @@
 # This script should be sourced in your .zshrc file: `source /path/to/autocorrect.sh
 #
 # -- Configuration --
-# Get the director where this script is located to build robust paths
 
+# Get the director where this script is located to build robust paths
 SCRIPT_DIR=${0:a:h}
 PYTHON_EXEC="$SCRIPT_DIR/.venv/bin/python"
 PY_LOGIC_DIR="$SCRIPT_DIR/py_logic"
+
+# -- Colors --
+C_YELLOW='\e[33m'
+C_CYAN='\e[36m'
+C_RED='\e[31m'
+C_GREEN='\e[32m'
+C_RESET='\e[0m'
 
 command_not_found_handler() {
     local failed_command="$*"
@@ -25,9 +32,10 @@ command_not_found_handler() {
         return 127
     fi
 
-    echo "Suggested: $suggestion"
+    echo -e "${C_YELLOW}Suggested: ${C_CYAN}$suggestion${C_RESET}"
+    echo -ne "${C_CYAN}(${C_RED}a${C_CYAN})ccept, (${C_RED}r${C_CYAN})eject, or (${C_RED}c${C_CYAN})orrect? ${C_RESET}"
+    read -k 1 -r choice
 
-    read -k 1 -r 'choice?(a)ccept, (r)eject, or (c)orrect? '
 
     case "$choice" in
         a|A)
@@ -35,20 +43,20 @@ command_not_found_handler() {
             ;;
         c|C)
             echo
-            echo -n "Please enter the correct command: "
+            echo -ne "${C_CYAN}Please enter the correct command: ${C_RESET}"
             read -r user_correction < /dev/tty
 
-            echo "DEBUG: user_correction is set to: [$user_correction]"
+            echo
             eval "$user_correction"
 
             if [[ $? -eq 0 ]]; then
                 "$PYTHON_EXEC" -m py_logic learn "$user_correction"
             else
-                echo "The corrected command failed. Not learning this pattern"
+                echo -e "${C_RED}The corrected command failed. Not learning this pattern${C_RESET}"
             fi
             ;;
         *)
-            printf "\nCommand rejected"
+            echo -e "${C_RED}\nCommand rejected${C_RESET}"
             return 127
             ;;
     esac
