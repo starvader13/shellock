@@ -13,14 +13,13 @@ A smart, learning-based tool for your Zsh shell that automatically detects and s
 
 ## How It Works
 
-This tool uses a hybrid approach to safely and efficiently intercept failed commands.
+This tool uses Zsh's `command_not_found_handler` to intercept failed commands.
 
-1.  A lightweight `preexec` hook saves the command string you are about to run.
-2.  If the command fails (returns a non-zero exit code), a `trap ERR` handler is triggered.
-3.  The handler passes the failed command to a Python script.
-4.  The Python script uses fuzzy matching to find the best correction from a list of previously successful commands stored in `autocorrect_aliases.json`.
-5.  If a good suggestion is found, it is presented to you with the interactive `(a)ccept, (r)eject, or (c)orrect?` prompt.
-6.  If you choose to `(c)orrect`, the new successful command is automatically saved to `autocorrect_aliases.json` for future use.
+1.  When you type a command that Zsh cannot find, the `command_not_found_handler` is triggered.
+2.  This handler passes the failed command to a Python script.
+3.  The Python script uses fuzzy matching to find the best correction from a list of previously successful commands stored in `autocorrect_aliases.json`.
+4.  If a good suggestion is found, it is presented to you with an interactive `(a)ccept, (r)eject, or (c)orrect?` prompt.
+5.  If you choose to `(c)orrect`, you can enter the correct command, and if successful, it's automatically saved to `autocorrect_aliases.json` for future use.
 
 ## Installation and Setup
 
@@ -40,13 +39,10 @@ This tool is designed for **Zsh**.
     ```
 
 3.  **Edit your `.zshrc` file:**
-    Add the following lines to your `~/.zshrc` file.
+    Add the following line to your `~/.zshrc` file:
 
     ```sh
-    # Required for the autocorrect tool's error trapping
-    setopt ERR_RETURN
-
-    # Load the autocorrect tool
+    # Load the autocorrect tool that defines the `command_not_found_handler`
     source /path/to/your/clone/of/auto-correct/autocorrect.sh
     ```
     *Make sure to replace `/path/to/your/clone/of/` with the actual path to where you cloned the repository.*
@@ -89,4 +85,4 @@ To prevent the tool from trying to correct commands that are expected to fail (l
 - **Shell:** Zsh
 - **Core Logic:** Python 3
 - **Fuzzy Matching:** `rapidfuzz` (a fast implementation of Levenshtein Distance)
-- **Hooks:** A hybrid of Zsh's `preexec` and `trap ERR` mechanisms.
+- **Hooks:** Zsh's `command_not_found_handler`
