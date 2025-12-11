@@ -2,22 +2,46 @@
   {
     "command": "git",
     "patterns": [
-      ["status"],
-      ["add", "-A"],
-      ["commit", "-m"],
-      ["pull", "origin"]
+      [
+        "status"
+      ],
+      [
+        "add",
+        "-A"
+      ],
+      [
+        "commit",
+        "-m"
+      ],
+      [
+        "pull",
+        "origin"
+      ],
+      [
+        "pull"
+      ]
     ]
   },
   {
     "command": "docker",
     "patterns": [
-      ["ps"],
-      ["ps", "-a"],
-      ["run", "-it"]
+      [
+        "ps"
+      ],
+      [
+        "ps",
+        "-a"
+      ],
+      [
+        "run",
+        "-it"
+      ]
     ]
   },
   {
     "command": "clear",
-    "patterns": [[]]
+    "patterns": [
+      []
+    ]
   }
 ]

@@ -27,7 +27,7 @@ command_not_found_handler() {
 
     echo "Suggested: $suggestion"
 
-    read -k 1 -r 'choice? (a)ccept, (r)eject, or (c)orrect? ' choice
+    read -k 1 -r 'choice?(a)ccept, (r)eject, or (c)orrect? '
 
     case "$choice" in
         a|A)
@@ -35,8 +35,10 @@ command_not_found_handler() {
             ;;
         c|C)
             echo
-            read -e -p -r "Please enter the correct command: " user_correction
+            echo -n "Please enter the correct command: "
+            read -r user_correction < /dev/tty
 
+            echo "DEBUG: user_correction is set to: [$user_correction]"
             eval "$user_correction"
 
             if [[ $? -eq 0 ]]; then
